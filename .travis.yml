@@ -6,7 +6,7 @@ matrix:
   include:
     - node_js: node
       script:
-        - npm run-script test-with-coverage
+        - npm run-script test
 
 node_js:
   - 1
