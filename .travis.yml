@@ -20,3 +20,5 @@ cache:
 before_install:
   - npm config set spin false
 
+after_success:
+  - nyc npm test && nyc report --reporter=text-lcov | coveralls
