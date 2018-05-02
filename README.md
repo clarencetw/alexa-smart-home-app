@@ -22,6 +22,10 @@
 A Node module to simplify the development of Alexa skills (applications.)
 This module is clone for [alexa-app](https://github.com/alexa-js/alexa-app) then redesign for alexa smart home skill
 
+[![NPM](https://img.shields.io/npm/v/alexa-smart-home-app.svg)](https://www.npmjs.com/package/alexa-smart-home-app/)
+[![Build Status](https://travis-ci.org/clarencetw/alexa-smart-home-app.svg?branch=master)](https://travis-ci.org/clarencetw/alexa-smart-home-app)
+[![Coverage Status](https://coveralls.io/repos/github/clarencetw/alexa-smart-home-app/badge.svg?branch=master)](https://coveralls.io/github/clarencetw/alexa-smart-home-app?branch=master)
+
 ## Introduction
 
 This module parses HTTP JSON requests from the Alexa platform and builds the JSON response that consumed by an Alexa-compatible device, such as the Echo.

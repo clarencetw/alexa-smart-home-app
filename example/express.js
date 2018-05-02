@@ -5,8 +5,8 @@ const PORT = process.env.port || 3000;
 const app = express();
 
 // ALWAYS setup the alexa app and attach it to express before anything else.
-const endpoint = '';
-const alexaApp = new alexa.app('test');
+const endpoint = 'test';
+const alexaApp = new alexa.app(endpoint);
 
 alexaApp.express({
   expressApp: app,
