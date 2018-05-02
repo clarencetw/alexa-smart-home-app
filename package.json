@@ -1,0 +1,43 @@
+{
+  "name": "alexa-smart-home-app",
+  "version": "1.0.0",
+  "description": "A framework for Alexa Smart Home Skill using Node.js Express",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --compilers js:babel-core/register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clarencetw/alexa-smart-home-app.git"
+  },
+  "keywords": [
+    "Alexa",
+    "Express"
+  ],
+  "author": "Clarence <mr.lin.clarence@gmail.com> (http://clarence.tw)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/clarencetw/alexa-smart-home-app/issues"
+  },
+  "homepage": "https://github.com/clarencetw/alexa-smart-home-app#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "chai-string": "^1.4.0",
+    "ejs": "^2.5.9",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0",
+    "express": "^4.16.3",
+    "mocha": "^5.1.1",
+    "nyc": "^11.7.1",
+    "sinon": "^4.5.0",
+    "sinon-chai": "^3.0.0",
+    "supertest": "^3.0.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "lodash.defaults": "^4.2.0"
+  }
+}
