@@ -164,6 +164,9 @@ alexa.payload = function (payload) {
     this.get = function (key) {
       return this.getScope()[key];
     };
+    this.set = function (key, value) {
+      payload[key] = value;
+    };
 
     this.details = payload;
     this.scope = payload.scope || {};
@@ -187,6 +190,9 @@ alexa.endpoint = function (endpoint) {
   if (isAvailable) {
     this.get = function (key) {
       return this.getScope()[key];
+    };
+    this.set = function (key, value) {
+      endpoint[key] = value;
     };
 
     this.details = endpoint;
