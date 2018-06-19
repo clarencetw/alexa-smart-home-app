@@ -1,6 +1,6 @@
 {
   "name": "alexa-smart-home-app",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A framework for Alexa Smart Home Skill using Node.js Express",
   "main": "index.js",
   "scripts": {

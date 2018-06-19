@@ -18,13 +18,20 @@ alexa.response = function (header, payload, endpoint) {
   this.endpoint = function (obj) {
     if (typeof this.response.event.payload.endpoints === 'undefined') {
       this.response.event.payload.endpoints = this.endpoints;
+      this.payloadObject.set('endpoints', []);
     }
     if (typeof obj !== 'undefined') {
       this.endpoints.push(obj);
+      this.payloadObject.set('endpoints', this.endpoints);
     }
     this.setHeaderName('Discover.Response');
     return this;
   };
+  this.payloadObject = new alexa.payload();
+  this.setPayload = function (payloadJSON) {
+    this.response.event.payload = payloadJSON;
+  };
+  this.endpointObject = endpoint;
 
   this.cameraStreams = [];
   this.cameraStream = function (obj) {
@@ -33,6 +40,7 @@ alexa.response = function (header, payload, endpoint) {
     }
     if (typeof this.response.event.payload.cameraStreams === 'undefined') {
       this.response.event.payload.cameraStreams = this.cameraStreams;
+      this.payloadObject.set('cameraStreams', this.cameraStreams);
     }
     if (typeof obj !== 'undefined') {
       this.cameraStreams.push(obj);
@@ -47,6 +55,9 @@ alexa.response = function (header, payload, endpoint) {
     }
     this.response.event.payload.type = type;
     this.response.event.payload.message = message;
+    this.payloadObject.clear();
+    this.payloadObject.set('type', type);
+    this.payloadObject.set('message', message);
     this.setHeaderName('ErrorResponse');
     this.setHeaderNamespace('Alexa');
     return this;
@@ -75,7 +86,7 @@ alexa.response = function (header, payload, endpoint) {
     this.response.event.header.namespace = name;
   };
   this.prepare = function () {
-
+    this.setPayload(this.payloadObject.getDetails());
   };
 };
 
@@ -160,25 +171,32 @@ alexa.payload = function (payload) {
   this.isAvailable = function () {
     return isAvailable;
   };
-  if (isAvailable) {
-    this.get = function (key) {
-      return this.getScope()[key];
-    };
-    this.set = function (key, value) {
-      payload[key] = value;
-    };
 
-    this.details = payload;
-    this.scope = payload.scope || {};
-  } else {
-    this.get = function () {
-      throw 'NO_PAYLOAD';
-    };
-    this.details = {};
-    this.scope = {};
-  }
+  this.get = function (key) {
+    return this.getDetails()[key];
+  };
+  this.set = function (key, value) {
+    // payload[key] = value;
+    this.details[key] = value;
+  };
+  this.clear = function (key) {
+    if (typeof key === 'string') {
+      if (typeof this.details[key] !== 'undefined') {
+        delete this.details[key];
+      }
+    } else {
+      this.details = {};
+    }
+  };
+
+  this.details = payload || {};
+  this.scope = (typeof payload !== 'undefined') ? payload.scope : {};
+
   this.getScope = function () {
     return JSON.parse(JSON.stringify(this.scope));
+  };
+  this.getDetails = function () {
+    return JSON.parse(JSON.stringify(this.details));
   };
 };
 
