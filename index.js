@@ -10,6 +10,7 @@ alexa.response = function (header, payload, endpoint) {
   this.resolved = false;
   this.response = {
     event: {
+      context: {},
       header: {},
       payload: {},
     },
@@ -30,6 +31,9 @@ alexa.response = function (header, payload, endpoint) {
   this.payloadObject = new alexa.payload();
   this.setPayload = function (payloadJSON) {
     this.response.event.payload = payloadJSON;
+  };
+  this.setContext = function (contextJSON) {
+    this.response.context = contextJSON;
   };
   this.endpointObject = endpoint;
 
@@ -73,6 +77,25 @@ alexa.response = function (header, payload, endpoint) {
     return this;
   };
 
+  this.powerController = function (value, timeOfSample, uncertaintyInMilliseconds) {
+    if (typeof this.response.event.endpoint === 'undefined') {
+      this.response.event.endpoint = endpoint.details;
+    }
+
+    this.setContext({
+      properties: [{
+        namespace: 'Alexa.PowerController',
+        name: 'powerState',
+        value,
+        timeOfSample,
+        uncertaintyInMilliseconds,
+      }],
+    });
+    this.setHeaderName('Response');
+    this.setHeaderNamespace('Alexa');
+    return this;
+  };
+
   this.setHeaderName = function (name) {
     if (typeof this.response.event.header.name === 'undefined') {
       this.response.event.header = JSON.parse(JSON.stringify(header.details));
@@ -112,6 +135,10 @@ alexa.request = function (json) {
   this.isSceneController = function () {
     const requestNamespace = this.namespace;
     return (requestNamespace && requestNamespace.indexOf('Alexa.SceneController') === 0);
+  };
+  this.isPowerController = function () {
+    const requestNamespace = this.namespace;
+    return (requestNamespace && requestNamespace.indexOf('Alexa.PowerController') === 0);
   };
 
   this.namespace = null;
@@ -244,6 +271,7 @@ alexa.app = function (name) {
     NO_DISCOVERY_FUNCTION: 'Try telling the application what to do instead of discovery it',
     NO_CAMERASTREAMCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
     NO_SCENECONTROLLER_FUNCTION: "Sorry, the application can't handle this",
+    NO_POWERCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
     NO_ALEXA_FUNCTION: 'Try telling the application what to do instead of opening it',
   };
 
@@ -270,6 +298,11 @@ alexa.app = function (name) {
   this.sceneControllerFunc = null;
   this.sceneController = function (func) {
     self.sceneControllerFunc = func;
+  };
+
+  this.powerControllerFunc = null;
+  this.powerController = function (func) {
+    self.powerControllerFunc = func;
   };
 
   this.request = function (request_json) {
@@ -337,6 +370,11 @@ alexa.app = function (name) {
             return Promise.resolve(self.sceneControllerFunc(request, response));
           }
           throw 'NO_SCENECONTROLLER_FUNCTION';
+        } else if (requestNamespace === 'Alexa.PowerController') {
+          if (typeof self.powerControllerFunc === 'function') {
+            return Promise.resolve(self.powerControllerFunc(request, response));
+          }
+          throw 'NO_POWERCONTROLLER_FUNCTION';
         } else if (requestNamespace === 'Alexa') {
           if (typeof self.alexaFunc === 'function') {
             return Promise.resolve(self.alexaFunc(request, response));
@@ -364,7 +402,7 @@ alexa.app = function (name) {
             response.endpoint();
             return response.send(e);
           }
-          if (request.isCameraStreamController() || request.isSceneController()) {
+          if (request.isCameraStreamController() || request.isSceneController() || request.isPowerController()) {
             response.errorResponse('INTERNAL_ERROR', self.messages[e]);
             return response.send(e);
           }
