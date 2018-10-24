@@ -96,6 +96,12 @@ alexa.response = function (header, payload, endpoint) {
     return this;
   };
 
+  this.authorization = function () {
+    this.setHeaderName('AcceptGrant.Response');
+    this.setHeaderNamespace('Alexa.Authorization');
+    return this;
+  };
+
   this.setHeaderName = function (name) {
     if (typeof this.response.event.header.name === 'undefined') {
       this.response.event.header = JSON.parse(JSON.stringify(header.details));
@@ -139,6 +145,10 @@ alexa.request = function (json) {
   this.isPowerController = function () {
     const requestNamespace = this.namespace;
     return (requestNamespace && requestNamespace.indexOf('Alexa.PowerController') === 0);
+  };
+  this.isAuthorization = function () {
+    const requestNamespace = this.namespace;
+    return (requestNamespace && requestNamespace.indexOf('Alexa.Authorization') === 0);
   };
 
   this.namespace = null;
@@ -273,6 +283,7 @@ alexa.app = function (name) {
     NO_SCENECONTROLLER_FUNCTION: "Sorry, the application can't handle this",
     NO_POWERCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
     NO_ALEXA_FUNCTION: 'Try telling the application what to do instead of opening it',
+    NO_AUTHORIZATION_FUNCTION: "Sorry, the application can't handle this",
   };
 
   this.error = null;
@@ -303,6 +314,11 @@ alexa.app = function (name) {
   this.powerControllerFunc = null;
   this.powerController = function (func) {
     self.powerControllerFunc = func;
+  };
+
+  this.authorizationFunc = null;
+  this.authorization = function (func) {
+    self.authorizationFunc = func;
   };
 
   this.request = function (request_json) {
@@ -380,6 +396,11 @@ alexa.app = function (name) {
             return Promise.resolve(self.alexaFunc(request, response));
           }
           throw 'NO_ALEXA_FUNCTION';
+        } else if (requestNamespace === 'Alexa.Authorization') {
+          if (typeof self.authorizationFunc === 'function') {
+            return Promise.resolve(self.authorizationFunc(request, response));
+          }
+          throw 'NO_AUTHORIZATION_FUNCTION';
         } else {
           throw 'INVALID_REQUEST_NAMESPACE';
         }
@@ -402,7 +423,7 @@ alexa.app = function (name) {
             response.endpoint();
             return response.send(e);
           }
-          if (request.isCameraStreamController() || request.isSceneController() || request.isPowerController()) {
+          if (request.isCameraStreamController() || request.isSceneController() || request.isPowerController() || request.isAuthorization()) {
             response.errorResponse('INTERNAL_ERROR', self.messages[e]);
             return response.send(e);
           }
