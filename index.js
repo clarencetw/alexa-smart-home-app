@@ -102,26 +102,26 @@ alexa.response = function (header, payload, endpoint) {
     return this;
   };
 
-    this.mediametadatas = [];
-    this.mediametadataerrors = [];
-    this.mediametadata = function (obj, errObj) {
-        if (typeof this.response.event.payload.media === 'undefined') {
-            this.response.event.payload.media = this.mediametadatas;
-            this.payloadObject.set('media', this.mediametadatas);
-        }
-        if (typeof obj !== 'undefined') {
-            this.mediametadatas.push(obj);
-        }
-        if (typeof this.response.event.payload.errors === 'undefined') {
-            this.response.event.payload.errors = this.mediametadataerrors;
-            this.payloadObject.set('errors', this.mediametadataerrors);
-        }
-        if (typeof errObj !== 'undefined') {
-            this.mediametadataerrors.push(errObj);
-        }
-        this.setHeaderName('Response');
-        return this;
-    };
+  this.mediametadatas = [];
+  this.mediametadataerrors = [];
+  this.mediametadata = function (obj, errObj) {
+    if (typeof this.response.event.payload.media === 'undefined') {
+      this.response.event.payload.media = this.mediametadatas;
+      this.payloadObject.set('media', this.mediametadatas);
+    }
+    if (typeof obj !== 'undefined') {
+      this.mediametadatas.push(obj);
+    }
+    if (typeof this.response.event.payload.errors === 'undefined') {
+      this.response.event.payload.errors = this.mediametadataerrors;
+      this.payloadObject.set('errors', this.mediametadataerrors);
+    }
+    if (typeof errObj !== 'undefined') {
+      this.mediametadataerrors.push(errObj);
+    }
+    this.setHeaderName('GetMediaMetadata.Response');
+    return this;
+  };
 
   this.setHeaderName = function (name) {
     if (typeof this.response.event.header.name === 'undefined') {
@@ -171,10 +171,10 @@ alexa.request = function (json) {
     const requestNamespace = this.namespace;
     return (requestNamespace && requestNamespace.indexOf('Alexa.Authorization') === 0);
   };
-    this.isMediametadata = function () {
-        const requestNamespace = this.namespace;
-        return (requestNamespace && requestNamespace.indexOf('Alexa.MediaMetadata') === 0);
-    };
+  this.isMediametadata = function () {
+    const requestNamespace = this.namespace;
+    return (requestNamespace && requestNamespace.indexOf('Alexa.MediaMetadata') === 0);
+  };
 
   this.namespace = null;
   this.name = null;
@@ -309,7 +309,7 @@ alexa.app = function (name) {
     NO_POWERCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
     NO_ALEXA_FUNCTION: 'Try telling the application what to do instead of opening it',
     NO_AUTHORIZATION_FUNCTION: "Sorry, the application can't handle this",
-      NO_MEDIAMETADATA_FUNCTION:  "Sorry, the application can't handle this",
+    NO_MEDIAMETADATA_FUNCTION: "Sorry, the application can't handle this",
   };
 
   this.error = null;
@@ -347,10 +347,10 @@ alexa.app = function (name) {
     self.authorizationFunc = func;
   };
 
-    this.mediametadataFunc = null;
-    this.mediametadata = function (func) {
-        self.mediametadataFunc = func;
-    };
+  this.mediametadataFunc = null;
+  this.mediametadata = function (func) {
+    self.mediametadataFunc = func;
+  };
 
   this.request = function (request_json) {
     const request = new alexa.request(request_json);
@@ -433,10 +433,10 @@ alexa.app = function (name) {
           }
           throw 'NO_AUTHORIZATION_FUNCTION';
         } else if (requestNamespace === 'Alexa.MediaMetadata') {
-            if (typeof self.mediametadataFunc === 'function') {
-                return Promise.resolve(self.mediametadataFunc(request, response));
-            }
-            throw 'NO_MEDIAMETADATA_FUNCTION';
+          if (typeof self.mediametadataFunc === 'function') {
+            return Promise.resolve(self.mediametadataFunc(request, response));
+          }
+          throw 'NO_MEDIAMETADATA_FUNCTION';
         } else {
           throw 'INVALID_REQUEST_NAMESPACE';
         }
