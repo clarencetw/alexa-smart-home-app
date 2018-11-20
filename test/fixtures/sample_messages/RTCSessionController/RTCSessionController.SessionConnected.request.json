@@ -1,0 +1,24 @@
+{
+    "directive": {
+        "header": {
+            "namespace": "Alexa.RTCSessionController",
+            "name": "SessionConnected",
+            "messageId": "d1ba3aa7-bff7-4406-9425-f25f04ec8d68",
+            "correlationToken": "dFMb0z+PgpgdDmluhJ1LddFvSqZ/jCc8ptlAKulUj90jSqg==",
+            "payloadVersion": "3"
+        },
+        "endpoint": {
+            "scope": {
+                "type": "BearerToken",
+                "token": "access-token-from-skill"
+            },
+            "endpointId": "appliance-001",
+            "cookie": {
+                "keys": "key/value pairs received during discovery"
+            }
+        },
+        "payload": {
+            "sessionId": "session identifier"
+        }
+    }
+}

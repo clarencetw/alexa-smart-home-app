@@ -13,6 +13,7 @@ alexa.response = function (header, payload, endpoint) {
       context: {},
       header: {},
       payload: {},
+      endpoint: {},
     },
   };
   this.endpoints = [];
@@ -123,6 +124,38 @@ alexa.response = function (header, payload, endpoint) {
     return this;
   };
 
+  this.rtcSessionController = function (headerName, obj) {
+    if (typeof this.response.event.endpoint === 'undefined') {
+      this.response.event.endpoint.endpointId = endpoint.details.endpointId;
+    }
+
+    if (typeof obj !== 'undefined') {
+      const keys = Object.keys(obj);
+      for (let i = 0; i < keys.length; i++) {
+        this.payloadObject.set(keys[i], obj[keys[i]]);
+      }
+    }
+    this.setHeaderName(headerName);
+    this.setHeaderNamespace('Alexa.RTCSessionController');
+    return this;
+  };
+
+  this.speaker = function (properties) {
+    if (typeof this.response.event.endpoint === 'undefined') {
+      this.response.event.endpoint = endpoint.details;
+    }
+
+    if (Array.isArray(properties)) {
+      this.setContext({
+        properties,
+      });
+    }
+
+    this.setHeaderName('Response');
+    this.setHeaderNamespace('Alexa.Speaker');
+    return this;
+  };
+
   this.setHeaderName = function (name) {
     if (typeof this.response.event.header.name === 'undefined') {
       this.response.event.header = JSON.parse(JSON.stringify(header.details));
@@ -174,6 +207,14 @@ alexa.request = function (json) {
   this.isMediametadata = function () {
     const requestNamespace = this.namespace;
     return (requestNamespace && requestNamespace.indexOf('Alexa.MediaMetadata') === 0);
+  };
+  this.isRTCSessionController = function () {
+    const requestNamespace = this.namespace;
+    return (requestNamespace && requestNamespace.indexOf('Alexa.RTCSessionController') === 0);
+  };
+  this.isSpeaker = function () {
+    const requestNamespace = this.namespace;
+    return (requestNamespace && requestNamespace.indexOf('Alexa.Speaker') === 0);
   };
 
   this.namespace = null;
@@ -310,6 +351,8 @@ alexa.app = function (name) {
     NO_ALEXA_FUNCTION: 'Try telling the application what to do instead of opening it',
     NO_AUTHORIZATION_FUNCTION: "Sorry, the application can't handle this",
     NO_MEDIAMETADATA_FUNCTION: "Sorry, the application can't handle this",
+    NO_RTCSESSIONCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
+    NO_STEAKER_FUNCTION: "Sorry, the application can't handle this",
   };
 
   this.error = null;
@@ -350,6 +393,16 @@ alexa.app = function (name) {
   this.mediametadataFunc = null;
   this.mediametadata = function (func) {
     self.mediametadataFunc = func;
+  };
+
+  this.rtcSessionControllerFunc = null;
+  this.rtcSessionController = function (func) {
+    self.rtcSessionControllerFunc = func;
+  };
+
+  this.speakerFunc = null;
+  this.speaker = function (func) {
+    self.speakerFunc = func;
   };
 
   this.request = function (request_json) {
@@ -437,6 +490,16 @@ alexa.app = function (name) {
             return Promise.resolve(self.mediametadataFunc(request, response));
           }
           throw 'NO_MEDIAMETADATA_FUNCTION';
+        } else if (requestNamespace === 'Alexa.RTCSessionController') {
+          if (typeof self.rtcSessionControllerFunc === 'function') {
+            return Promise.resolve(self.rtcSessionControllerFunc(request, response));
+          }
+          throw 'NO_RTCSESSIONCONTROLLER_FUNCTION';
+        } else if (requestNamespace === 'Alexa.Speaker') {
+          if (typeof self.speakerFunc === 'function') {
+            return Promise.resolve(self.speakerFunc(request, response));
+          }
+          throw 'NO_STEAKER_FUNCTION';
         } else {
           throw 'INVALID_REQUEST_NAMESPACE';
         }
@@ -463,7 +526,10 @@ alexa.app = function (name) {
               request.isSceneController() ||
               request.isPowerController() ||
               request.isAuthorization() ||
-              request.isMediametadata()) {
+              request.isRTCSessionController() ||
+              request.isMediametadata() ||
+              request.isSpeaker()
+          ) {
             response.errorResponse('INTERNAL_ERROR', self.messages[e]);
             return response.send(e);
           }

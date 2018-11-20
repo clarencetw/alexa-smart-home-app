@@ -1,0 +1,17 @@
+{
+    "event": {
+        "header": {
+            "namespace": "Alexa.RTCSessionController",
+            "name": "SessionConnected",
+            "messageId": "30d2cd1a-ce4f-4542-aa5e-04bd0a6492d5",
+            "correlationToken": "dFMb0z+PgpgdDmluhJ1LddFvSqZ/jCc8ptlAKulUj90jSqg==",
+            "payloadVersion": "3"
+        },
+        "endpoint": {
+            "endpointId": "appliance-001"
+        },
+        "payload": {
+            "sessionId": "session identifier"
+        }
+    }
+}
