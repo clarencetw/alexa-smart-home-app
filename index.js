@@ -156,6 +156,22 @@ alexa.response = function (header, payload, endpoint) {
     return this;
   };
 
+  this.alexaResponse = function (properties) {
+    if (typeof this.response.event.endpoint === 'undefined') {
+      this.response.event.endpoint = endpoint.details;
+    }
+
+    if (Array.isArray(properties)) {
+      this.setContext({
+        properties,
+      });
+    }
+
+    this.setHeaderName('Response');
+    this.setHeaderNamespace('Alexa');
+    return this;
+  };
+
   this.setHeaderName = function (name) {
     if (typeof this.response.event.header.name === 'undefined') {
       this.response.event.header = JSON.parse(JSON.stringify(header.details));
@@ -215,6 +231,14 @@ alexa.request = function (json) {
   this.isSpeaker = function () {
     const requestNamespace = this.namespace;
     return (requestNamespace && requestNamespace.indexOf('Alexa.Speaker') === 0);
+  };
+  this.isAlexa = function () {
+    const requestNamespace = this.namespace;
+    return (requestNamespace && requestNamespace.indexOf('Alexa') === 0);
+  };
+  this.isStepSpeaker = function () {
+    const requestNamespace = this.namespace;
+    return (requestNamespace && requestNamespace.indexOf('Alexa.StepSpeaker') === 0);
   };
 
   this.namespace = null;
@@ -352,7 +376,9 @@ alexa.app = function (name) {
     NO_AUTHORIZATION_FUNCTION: "Sorry, the application can't handle this",
     NO_MEDIAMETADATA_FUNCTION: "Sorry, the application can't handle this",
     NO_RTCSESSIONCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
-    NO_STEAKER_FUNCTION: "Sorry, the application can't handle this",
+    NO_SPEAKER_FUNCTION: "Sorry, the application can't handle this",
+    NO_ALEXARESPONSE_FUNCTION: "Sorry, the application can't handle this",
+    NO_STEPSPEAKER_FUNCTION: "Sorry, the application can't handle this",
   };
 
   this.error = null;
@@ -403,6 +429,16 @@ alexa.app = function (name) {
   this.speakerFunc = null;
   this.speaker = function (func) {
     self.speakerFunc = func;
+  };
+
+  this.alexaFunc = null;
+  this.alexa = function (func) {
+    self.alexaFunc = func;
+  };
+
+  this.stepSpeakerFunc = null;
+  this.stepSpeaker = function (func) {
+    self.stepSpeakerFunc = func;
   };
 
   this.request = function (request_json) {
@@ -499,7 +535,17 @@ alexa.app = function (name) {
           if (typeof self.speakerFunc === 'function') {
             return Promise.resolve(self.speakerFunc(request, response));
           }
-          throw 'NO_STEAKER_FUNCTION';
+          throw 'NO_SPEAKER_FUNCTION';
+        } else if (requestNamespace === 'Alexa') {
+          if (typeof self.alexaFunc === 'function') {
+            return Promise.resolve(self.alexaFunc(request, response));
+          }
+          throw 'NO_ALEXARESPONSE_FUNCTION';
+        } else if (requestNamespace === 'Alexa.StepSpeaker') {
+          if (typeof self.stepSpeakerFunc === 'function') {
+            return Promise.resolve(self.stepSpeakerFunc(request, response));
+          }
+          throw 'NO_STEPSPEAKER_FUNCTION';
         } else {
           throw 'INVALID_REQUEST_NAMESPACE';
         }
@@ -528,7 +574,9 @@ alexa.app = function (name) {
               request.isAuthorization() ||
               request.isRTCSessionController() ||
               request.isMediametadata() ||
-              request.isSpeaker()
+              request.isSpeaker() ||
+              request.isAlexa() ||
+              request.isStepSpeaker()
           ) {
             response.errorResponse('INTERNAL_ERROR', self.messages[e]);
             return response.send(e);
