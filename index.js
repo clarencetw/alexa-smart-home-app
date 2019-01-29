@@ -43,6 +43,9 @@ alexa.response = function (header, payload, endpoint) {
     if (typeof this.response.event.endpoint === 'undefined') {
       this.response.event.endpoint = endpoint.details;
     }
+    if (Object.keys(this.response.event.endpoint).length === 0) {
+      this.response.event.endpoint = endpoint.details;
+    }
     if (typeof this.response.event.payload.cameraStreams === 'undefined') {
       this.response.event.payload.cameraStreams = this.cameraStreams;
       this.payloadObject.set('cameraStreams', this.cameraStreams);
@@ -56,6 +59,9 @@ alexa.response = function (header, payload, endpoint) {
 
   this.errorResponse = function (type, message) {
     if (typeof this.response.event.endpoint === 'undefined') {
+      this.response.event.endpoint = endpoint.details;
+    }
+    if (Object.keys(this.response.event.endpoint).length === 0) {
       this.response.event.endpoint = endpoint.details;
     }
     this.response.event.payload.type = type;
@@ -72,6 +78,9 @@ alexa.response = function (header, payload, endpoint) {
     if (typeof this.response.event.endpoint === 'undefined') {
       this.response.event.endpoint = endpoint.details;
     }
+    if (Object.keys(this.response.event.endpoint).length === 0) {
+      this.response.event.endpoint = endpoint.details;
+    }
 
     this.setHeaderName(name);
     this.setHeaderNamespace('Alexa.SceneController');
@@ -80,6 +89,9 @@ alexa.response = function (header, payload, endpoint) {
 
   this.powerController = function (value, timeOfSample, uncertaintyInMilliseconds) {
     if (typeof this.response.event.endpoint === 'undefined') {
+      this.response.event.endpoint = endpoint.details;
+    }
+    if (Object.keys(this.response.event.endpoint).length === 0) {
       this.response.event.endpoint = endpoint.details;
     }
 
@@ -128,6 +140,9 @@ alexa.response = function (header, payload, endpoint) {
     if (typeof this.response.event.endpoint === 'undefined') {
       this.response.event.endpoint.endpointId = endpoint.details.endpointId;
     }
+    if (Object.keys(this.response.event.endpoint).length === 0) {
+      this.response.event.endpoint = endpoint.details;
+    }
 
     if (typeof obj !== 'undefined') {
       const keys = Object.keys(obj);
@@ -144,6 +159,9 @@ alexa.response = function (header, payload, endpoint) {
     if (typeof this.response.event.endpoint === 'undefined') {
       this.response.event.endpoint = endpoint.details;
     }
+    if (Object.keys(this.response.event.endpoint).length === 0) {
+      this.response.event.endpoint = endpoint.details;
+    }
 
     if (Array.isArray(properties)) {
       this.setContext({
@@ -158,6 +176,9 @@ alexa.response = function (header, payload, endpoint) {
 
   this.alexaResponse = function (properties) {
     if (typeof this.response.event.endpoint === 'undefined') {
+      this.response.event.endpoint = endpoint.details;
+    }
+    if (Object.keys(this.response.event.endpoint).length === 0) {
       this.response.event.endpoint = endpoint.details;
     }
 

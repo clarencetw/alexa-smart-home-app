@@ -66,6 +66,16 @@ describe('Alexa', () => {
 
                 return expect(subject).to.be.rejectedWith('promise failure');
               });
+
+              it('responds have endpointId', () => {
+                testApp.powerController((req, res) => Promise.resolve().then(() => {
+                  res.powerController(value, timeOfSample, uncertaintyInMilliseconds);
+                }));
+
+                const subject = testApp.request(mockRequest).then(response => response.event.endpoint.endpointId);
+
+                return expect(subject).to.eventually.become(mockRequest.directive.endpoint.endpointId);
+              });
             });
           });
         });
