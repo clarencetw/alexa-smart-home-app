@@ -511,11 +511,6 @@ alexa.app = function (name) {
     self.speakerFunc = func;
   };
 
-  this.alexaFunc = null;
-  this.alexa = function (func) {
-    self.alexaFunc = func;
-  };
-
   this.stepSpeakerFunc = null;
   this.stepSpeaker = function (func) {
     self.stepSpeakerFunc = func;
