@@ -36,6 +36,9 @@ alexa.response = function (header, payload, endpoint) {
   this.setContext = function (contextJSON) {
     this.response.context = contextJSON;
   };
+  this.setEventContext = function (contextJSON) {
+    this.response.event.context = contextJSON;
+  };
   this.endpointObject = endpoint;
 
   this.cameraStreams = [];
@@ -174,7 +177,7 @@ alexa.response = function (header, payload, endpoint) {
     return this;
   };
 
-  this.alexaResponse = function (properties) {
+  this.alexaResponse = function (properties, eventProperties) {
     if (typeof this.response.event.endpoint === 'undefined') {
       this.response.event.endpoint = endpoint.details;
     }
@@ -188,8 +191,59 @@ alexa.response = function (header, payload, endpoint) {
       });
     }
 
+    if (typeof eventProperties === 'object') {
+      this.setEventContext({
+        properties: eventProperties,
+      });
+    }
+
     this.setHeaderName('Response');
     this.setHeaderNamespace('Alexa');
+    return this;
+  };
+
+  this.securityPanelController = function (value, timeOfSample, uncertaintyInMilliseconds, obj) {
+    if (typeof this.response.event.endpoint === 'undefined') {
+      this.response.event.endpoint = endpoint.details;
+    }
+    if (Object.keys(this.response.event.endpoint).length === 0) {
+      this.response.event.endpoint = endpoint.details;
+    }
+    this.setEventContext({
+      properties: [{
+        namespace: 'Alexa.SecurityPanelController',
+        name: 'armState',
+        value,
+        timeOfSample,
+        uncertaintyInMilliseconds,
+      }],
+    });
+    if (typeof obj !== 'undefined') {
+      const keys = Object.keys(obj);
+      for (let i = 0; i < keys.length; i++) {
+        this.payloadObject.set(keys[i], obj[keys[i]]);
+      }
+    }
+    this.setHeaderName('Arm.Response');
+    this.setHeaderNamespace('Alexa.SecurityPanelController');
+    return this;
+  };
+
+  this.securityPanelControllerError = function (obj) {
+    if (typeof this.response.event.endpoint === 'undefined') {
+      this.response.event.endpoint = endpoint.details;
+    }
+    if (Object.keys(this.response.event.endpoint).length === 0) {
+      this.response.event.endpoint = endpoint.details;
+    }
+    if (typeof obj !== 'undefined') {
+      const keys = Object.keys(obj);
+      for (let i = 0; i < keys.length; i++) {
+        this.payloadObject.set(keys[i], obj[keys[i]]);
+      }
+    }
+    this.setHeaderName('ErrorResponse');
+    this.setHeaderNamespace('Alexa.SecurityPanelController');
     return this;
   };
 
@@ -260,6 +314,10 @@ alexa.request = function (json) {
   this.isStepSpeaker = function () {
     const requestNamespace = this.namespace;
     return (requestNamespace && requestNamespace.indexOf('Alexa.StepSpeaker') === 0);
+  };
+  this.isSecurityPanelController = function () {
+    const requestNamespace = this.namespace;
+    return (requestNamespace && requestNamespace.indexOf('Alexa.SecurityPanelController') === 0);
   };
 
   this.namespace = null;
@@ -400,6 +458,7 @@ alexa.app = function (name) {
     NO_SPEAKER_FUNCTION: "Sorry, the application can't handle this",
     NO_ALEXARESPONSE_FUNCTION: "Sorry, the application can't handle this",
     NO_STEPSPEAKER_FUNCTION: "Sorry, the application can't handle this",
+    NO_SECURITYPANELCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
   };
 
   this.error = null;
@@ -460,6 +519,11 @@ alexa.app = function (name) {
   this.stepSpeakerFunc = null;
   this.stepSpeaker = function (func) {
     self.stepSpeakerFunc = func;
+  };
+
+  this.stepSecurityPanelControllerFunc = null;
+  this.stepSecurityPanelController = function (func) {
+    self.stepSecurityPanelControllerFunc = func;
   };
 
   this.request = function (request_json) {
@@ -567,6 +631,11 @@ alexa.app = function (name) {
             return Promise.resolve(self.stepSpeakerFunc(request, response));
           }
           throw 'NO_STEPSPEAKER_FUNCTION';
+        } else if (requestNamespace === 'Alexa.SecurityPanelController') {
+          if (typeof self.stepSecurityPanelControllerFunc === 'function') {
+            return Promise.resolve(self.stepSecurityPanelControllerFunc(request, response));
+          }
+          throw 'NO_SECURITYPANELCONTROLLER_FUNCTION';
         } else {
           throw 'INVALID_REQUEST_NAMESPACE';
         }
@@ -597,7 +666,8 @@ alexa.app = function (name) {
               request.isMediametadata() ||
               request.isSpeaker() ||
               request.isAlexa() ||
-              request.isStepSpeaker()
+              request.isStepSpeaker() ||
+              request.isSecurityPanelController()
           ) {
             response.errorResponse('INTERNAL_ERROR', self.messages[e]);
             return response.send(e);
