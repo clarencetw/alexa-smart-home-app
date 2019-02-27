@@ -516,9 +516,9 @@ alexa.app = function (name) {
     self.stepSpeakerFunc = func;
   };
 
-  this.stepSecurityPanelControllerFunc = null;
-  this.stepSecurityPanelController = function (func) {
-    self.stepSecurityPanelControllerFunc = func;
+  this.securityPanelControllerFunc = null;
+  this.securityPanelController = function (func) {
+    self.securityPanelControllerFunc = func;
   };
 
   this.request = function (request_json) {
@@ -627,8 +627,8 @@ alexa.app = function (name) {
           }
           throw 'NO_STEPSPEAKER_FUNCTION';
         } else if (requestNamespace === 'Alexa.SecurityPanelController') {
-          if (typeof self.stepSecurityPanelControllerFunc === 'function') {
-            return Promise.resolve(self.stepSecurityPanelControllerFunc(request, response));
+          if (typeof self.securityPanelControllerFunc === 'function') {
+            return Promise.resolve(self.securityPanelControllerFunc(request, response));
           }
           throw 'NO_SECURITYPANELCONTROLLER_FUNCTION';
         } else {

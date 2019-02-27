@@ -46,7 +46,7 @@ describe('Alexa', () => {
 
             describe('output SecurityPanelController controller', () => {
               it('handles SecurityPanelController correctly', () => {
-                testApp.stepSecurityPanelController((req, res) => {
+                testApp.securityPanelController((req, res) => {
                   res.alexaResponse(null, properties);
                 });
 
@@ -56,7 +56,7 @@ describe('Alexa', () => {
               });
 
               it('handles SecurityPanelController don\'t have properties', () => {
-                testApp.stepSecurityPanelController((req, res) => {
+                testApp.securityPanelController((req, res) => {
                   res.alexaResponse();
                 });
 
@@ -66,7 +66,7 @@ describe('Alexa', () => {
               });
 
               it('responds with expected message for promise', () => {
-                testApp.stepSecurityPanelController((req, res) => Promise.resolve().then(() => {
+                testApp.securityPanelController((req, res) => Promise.resolve().then(() => {
                   res.alexaResponse(null, properties);
                 }));
 
@@ -76,7 +76,7 @@ describe('Alexa', () => {
               });
 
               it('handles error for promise', () => {
-                testApp.stepSecurityPanelController((req, res) => Promise.reject(new Error('promise failure')));
+                testApp.securityPanelController((req, res) => Promise.reject(new Error('promise failure')));
 
                 const subject = testApp.request(mockRequest);
 

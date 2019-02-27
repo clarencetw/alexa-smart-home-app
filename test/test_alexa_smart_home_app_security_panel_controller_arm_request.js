@@ -42,7 +42,7 @@ describe('Alexa', () => {
 
             describe('output SecurityPanelController controller', () => {
               it('handles SecurityPanelController correctly', () => {
-                testApp.stepSecurityPanelController((req, res) => {
+                testApp.securityPanelController((req, res) => {
                   res.securityPanelController(value, timeOfSample, uncertaintyInMilliseconds);
                 });
 
@@ -52,7 +52,7 @@ describe('Alexa', () => {
               });
 
               it('handles SecurityPanelController correctly', () => {
-                testApp.stepSecurityPanelController((req, res) => {
+                testApp.securityPanelController((req, res) => {
                   res.securityPanelController(value, timeOfSample, uncertaintyInMilliseconds);
                 });
 
@@ -62,7 +62,7 @@ describe('Alexa', () => {
               });
 
               it('responds with expected message for promise', () => {
-                testApp.stepSecurityPanelController((req, res) => Promise.resolve().then(() => {
+                testApp.securityPanelController((req, res) => Promise.resolve().then(() => {
                   res.securityPanelController(value, timeOfSample, uncertaintyInMilliseconds);
                 }));
 
@@ -72,7 +72,7 @@ describe('Alexa', () => {
               });
 
               it('handles error for promise', () => {
-                testApp.stepSecurityPanelController((req, res) => Promise.reject(new Error('promise failure')));
+                testApp.securityPanelController((req, res) => Promise.reject(new Error('promise failure')));
 
                 const subject = testApp.request(mockRequest);
 
@@ -80,7 +80,7 @@ describe('Alexa', () => {
               });
 
               it('responds have timeOfSample', () => {
-                testApp.stepSecurityPanelController((req, res) => Promise.resolve().then(() => {
+                testApp.securityPanelController((req, res) => Promise.resolve().then(() => {
                   res.securityPanelController(value, timeOfSample, uncertaintyInMilliseconds);
                 }));
 
@@ -90,7 +90,7 @@ describe('Alexa', () => {
               });
 
               it('responds have uncertaintyInMilliseconds', () => {
-                testApp.stepSecurityPanelController((req, res) => Promise.resolve().then(() => {
+                testApp.securityPanelController((req, res) => Promise.resolve().then(() => {
                   res.securityPanelController(value, timeOfSample, uncertaintyInMilliseconds);
                 }));
 
@@ -100,7 +100,7 @@ describe('Alexa', () => {
               });
 
               it('responds have payload exitDelayInSeconds', () => {
-                testApp.stepSecurityPanelController((req, res) => Promise.resolve().then(() => {
+                testApp.securityPanelController((req, res) => Promise.resolve().then(() => {
                   res.securityPanelController(value, timeOfSample, uncertaintyInMilliseconds, {
                     exitDelayInSeconds: 0,
                   });
@@ -117,7 +117,7 @@ describe('Alexa', () => {
                   message: 'Unable to arm or disarm the security panel because it is in alarm status.',
                 };
 
-                testApp.stepSecurityPanelController((req, res) => {
+                testApp.securityPanelController((req, res) => {
                   res.securityPanelControllerError(payload);
                 });
 
