@@ -209,7 +209,7 @@ alexa.response = function (header, payload, endpoint) {
     if (Object.keys(this.response.event.endpoint).length === 0) {
       this.response.event.endpoint = endpoint.details;
     }
-    this.setEventContext({
+    this.setContext({
       properties: [{
         namespace: 'Alexa.SecurityPanelController',
         name: 'armState',
@@ -224,7 +224,12 @@ alexa.response = function (header, payload, endpoint) {
         this.payloadObject.set(keys[i], obj[keys[i]]);
       }
     }
-    this.setHeaderName('Arm.Response');
+    if (typeof value === 'undefined') {
+      this.setHeaderName('ErrorResponse');
+    }
+    if (typeof value !== 'undefined') {
+      this.setHeaderName('Arm.Response');
+    }
     this.setHeaderNamespace('Alexa.SecurityPanelController');
     return this;
   };

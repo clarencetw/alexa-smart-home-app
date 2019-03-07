@@ -36,21 +36,21 @@ describe('Alexa', () => {
           });
 
           context('with a matching SecurityPanelController handler', () => {
-            const properties = {
+            const properties = [{
               namespace: 'Alexa.SecurityPanelController',
               name: 'armState',
               value: 'DISARMED',
               timeOfSample: '2017-02-03T16:20:50.52Z',
               uncertaintyInMilliseconds: 0,
-            };
+            }];
 
             describe('output SecurityPanelController controller', () => {
               it('handles SecurityPanelController correctly', () => {
                 testApp.securityPanelController((req, res) => {
-                  res.alexaResponse(null, properties);
+                  res.alexaResponse(properties);
                 });
 
-                const subject = testApp.request(mockRequest).then(response => response.event.context.properties);
+                const subject = testApp.request(mockRequest).then(response => response.context.properties);
 
                 return expect(subject).to.eventually.become(properties);
               });
@@ -60,17 +60,17 @@ describe('Alexa', () => {
                   res.alexaResponse();
                 });
 
-                const subject = testApp.request(mockRequest).then(response => response.event.context.properties);
+                const subject = testApp.request(mockRequest).then(response => response.event.header.name);
 
-                return expect(subject).to.eventually.become();
+                return expect(subject).to.eventually.become('Response');
               });
 
               it('responds with expected message for promise', () => {
                 testApp.securityPanelController((req, res) => Promise.resolve().then(() => {
-                  res.alexaResponse(null, properties);
+                  res.alexaResponse(properties);
                 }));
 
-                const subject = testApp.request(mockRequest).then(response => response.event.context.properties);
+                const subject = testApp.request(mockRequest).then(response => response.context.properties);
 
                 return expect(subject).to.eventually.become(properties);
               });

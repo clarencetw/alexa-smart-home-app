@@ -46,7 +46,7 @@ describe('Alexa', () => {
                   res.securityPanelController(value, timeOfSample, uncertaintyInMilliseconds);
                 });
 
-                const subject = testApp.request(mockRequest).then(response => response.event.context.properties[0].value);
+                const subject = testApp.request(mockRequest).then(response => response.context.properties[0].value);
 
                 return expect(subject).to.eventually.become(value);
               });
@@ -66,7 +66,7 @@ describe('Alexa', () => {
                   res.securityPanelController(value, timeOfSample, uncertaintyInMilliseconds);
                 }));
 
-                const subject = testApp.request(mockRequest).then(response => response.event.context.properties[0].value);
+                const subject = testApp.request(mockRequest).then(response => response.context.properties[0].value);
 
                 return expect(subject).to.eventually.become(value);
               });
@@ -84,7 +84,7 @@ describe('Alexa', () => {
                   res.securityPanelController(value, timeOfSample, uncertaintyInMilliseconds);
                 }));
 
-                const subject = testApp.request(mockRequest).then(response => response.event.context.properties[0].timeOfSample);
+                const subject = testApp.request(mockRequest).then(response => response.context.properties[0].timeOfSample);
 
                 return expect(subject).to.eventually.become(timeOfSample);
               });
@@ -94,7 +94,7 @@ describe('Alexa', () => {
                   res.securityPanelController(value, timeOfSample, uncertaintyInMilliseconds);
                 }));
 
-                const subject = testApp.request(mockRequest).then(response => response.event.context.properties[0].uncertaintyInMilliseconds);
+                const subject = testApp.request(mockRequest).then(response => response.context.properties[0].uncertaintyInMilliseconds);
 
                 return expect(subject).to.eventually.become(uncertaintyInMilliseconds);
               });
