@@ -224,12 +224,8 @@ alexa.response = function (header, payload, endpoint) {
         this.payloadObject.set(keys[i], obj[keys[i]]);
       }
     }
-    if (typeof value === 'undefined') {
-      this.setHeaderName('ErrorResponse');
-    }
-    if (typeof value !== 'undefined') {
-      this.setHeaderName('Arm.Response');
-    }
+
+    this.setHeaderName('Arm.Response');
     this.setHeaderNamespace('Alexa.SecurityPanelController');
     return this;
   };
