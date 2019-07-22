@@ -177,6 +177,25 @@ alexa.response = function (header, payload, endpoint) {
     return this;
   };
 
+  this.channelController = function (properties) {
+    if (typeof this.response.event.endpoint === 'undefined') {
+      this.response.event.endpoint = endpoint.details;
+    }
+    if (Object.keys(this.response.event.endpoint).length === 0) {
+      this.response.event.endpoint = endpoint.details;
+    }
+
+    if (Array.isArray(properties)) {
+      this.setContext({
+        properties,
+      });
+    }
+
+    this.setHeaderName('Response');
+    this.setHeaderNamespace('Alexa');
+    return this;
+  };
+
   this.alexaResponse = function (properties, eventProperties) {
     if (typeof this.response.event.endpoint === 'undefined') {
       this.response.event.endpoint = endpoint.details;
@@ -320,6 +339,10 @@ alexa.request = function (json) {
     const requestNamespace = this.namespace;
     return (requestNamespace && requestNamespace.indexOf('Alexa.SecurityPanelController') === 0);
   };
+  this.isChannelController = function () {
+    const requestNamespace = this.namespace;
+    return (requestNamespace && requestNamespace.indexOf('Alexa.ChannelController') === 0);
+  };
 
   this.namespace = null;
   this.name = null;
@@ -460,6 +483,7 @@ alexa.app = function (name) {
     NO_ALEXARESPONSE_FUNCTION: "Sorry, the application can't handle this",
     NO_STEPSPEAKER_FUNCTION: "Sorry, the application can't handle this",
     NO_SECURITYPANELCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
+    NO_CHANNELCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
   };
 
   this.error = null;
@@ -520,6 +544,11 @@ alexa.app = function (name) {
   this.securityPanelControllerFunc = null;
   this.securityPanelController = function (func) {
     self.securityPanelControllerFunc = func;
+  };
+
+  this.channelControllerFunc = null;
+  this.channelController = function (func) {
+    self.channelControllerFunc = func;
   };
 
   this.request = function (request_json) {
@@ -632,6 +661,11 @@ alexa.app = function (name) {
             return Promise.resolve(self.securityPanelControllerFunc(request, response));
           }
           throw 'NO_SECURITYPANELCONTROLLER_FUNCTION';
+        } else if (requestNamespace === 'Alexa.ChannelController') {
+          if (typeof self.channelControllerFunc === 'function') {
+            return Promise.resolve(self.channelControllerFunc(request, response));
+          }
+          throw 'NO_CHANNELCONTROLLER_FUNCTION';
         } else {
           throw 'INVALID_REQUEST_NAMESPACE';
         }
