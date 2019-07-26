@@ -62,7 +62,7 @@ describe('Alexa', () => {
             describe('output channel controller', () => {
               it('handles channel correctly', () => {
                 testApp.channelController((req, res) => {
-                  res.channelController(expectedChannel);
+                  res.alexaResponse(expectedChannel);
                 });
 
                 const subject = testApp.request(mockRequest).then(response => response.context.properties);
@@ -72,7 +72,7 @@ describe('Alexa', () => {
 
               it('responds with expected message for promise', () => {
                 testApp.channelController((req, res) => Promise.resolve().then(() => {
-                  res.channelController(expectedChannel);
+                  res.alexaResponse(expectedChannel);
                 }));
 
                 const subject = testApp.request(mockRequest).then(response => response.context.properties);
@@ -92,7 +92,7 @@ describe('Alexa', () => {
             describe('output channel controller', () => {
               it('handles channel correctly', () => {
                 testApp.channelController((req, res) => {
-                  res.channelController();
+                  res.alexaResponse();
                 });
 
                 const subject = testApp.request(mockRequest).then(response => response.context);
@@ -102,7 +102,7 @@ describe('Alexa', () => {
 
               it('responds with expected message for promise', () => {
                 testApp.channelController((req, res) => Promise.resolve().then(() => {
-                  res.channelController();
+                  res.alexaResponse();
                 }));
 
                 const subject = testApp.request(mockRequest).then(response => response.context);

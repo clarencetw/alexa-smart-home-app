@@ -177,25 +177,6 @@ alexa.response = function (header, payload, endpoint) {
     return this;
   };
 
-  this.channelController = function (properties) {
-    if (typeof this.response.event.endpoint === 'undefined') {
-      this.response.event.endpoint = endpoint.details;
-    }
-    if (Object.keys(this.response.event.endpoint).length === 0) {
-      this.response.event.endpoint = endpoint.details;
-    }
-
-    if (Array.isArray(properties)) {
-      this.setContext({
-        properties,
-      });
-    }
-
-    this.setHeaderName('Response');
-    this.setHeaderNamespace('Alexa');
-    return this;
-  };
-
   this.alexaResponse = function (properties, eventProperties) {
     if (typeof this.response.event.endpoint === 'undefined') {
       this.response.event.endpoint = endpoint.details;
