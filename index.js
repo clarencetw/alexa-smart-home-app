@@ -324,6 +324,10 @@ alexa.request = function (json) {
     const requestNamespace = this.namespace;
     return (requestNamespace && requestNamespace.indexOf('Alexa.ChannelController') === 0);
   };
+  this.isModeController = function () {
+    const requestNamespace = this.namespace;
+    return (requestNamespace && requestNamespace.indexOf('Alexa.ModeController') === 0);
+  };
 
   this.namespace = null;
   this.name = null;
@@ -465,6 +469,7 @@ alexa.app = function (name) {
     NO_STEPSPEAKER_FUNCTION: "Sorry, the application can't handle this",
     NO_SECURITYPANELCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
     NO_CHANNELCONTROLLER_FUNCTION: "Sorry, the application can't handle this",
+    NO_MODECONTROLLER_FUNCTION: "Sorry, the application can't handle this",
   };
 
   this.error = null;
@@ -530,6 +535,11 @@ alexa.app = function (name) {
   this.channelControllerFunc = null;
   this.channelController = function (func) {
     self.channelControllerFunc = func;
+  };
+
+  this.modeControllerFunc = null;
+  this.modeController = function (func) {
+    self.modeControllerFunc = func;
   };
 
   this.request = function (request_json) {
@@ -647,6 +657,11 @@ alexa.app = function (name) {
             return Promise.resolve(self.channelControllerFunc(request, response));
           }
           throw 'NO_CHANNELCONTROLLER_FUNCTION';
+        } else if (requestNamespace === 'Alexa.ModeController') {
+          if (typeof self.modeControllerFunc === 'function') {
+            return Promise.resolve(self.modeControllerFunc(request, response));
+          }
+          throw 'NO_MODECONTROLLER_FUNCTION';
         } else {
           throw 'INVALID_REQUEST_NAMESPACE';
         }
@@ -678,7 +693,9 @@ alexa.app = function (name) {
               request.isSpeaker() ||
               request.isAlexa() ||
               request.isStepSpeaker() ||
-              request.isSecurityPanelController()
+              request.isSecurityPanelController() ||
+              request.isChannelController() ||
+              request.isModeController()
           ) {
             response.errorResponse('INTERNAL_ERROR', self.messages[e]);
             return response.send(e);
